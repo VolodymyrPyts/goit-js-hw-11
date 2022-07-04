@@ -11,3 +11,34 @@ background-color: #3469fc;
 .button {
    margin-left: 20px;    
 }
+
+img {
+   display: block;
+   width: auto;
+   height: 180px;
+}
+.box {
+width: 1200px;
+   padding-left: 15px;
+   padding-right: 15px;
+   margin-right: auto;
+   margin-left: auto;
+   
+}
+.gallery {
+// width: 1170px;
+   display: flex;
+   flex-wrap: wrap;
+   text-align: center;
+   justify-content: space-between;
+//   margin: -15px;
+   
+}
+
+.photo-card {
+  
+
+ 
+flex-basis: calc((100% - 120px) / 4)
+
+}
