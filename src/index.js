@@ -10,16 +10,22 @@ position: 'rigth-top',
 timeout: 1000
 });
 
+const options = {
+  rootMargin: '200px',
+  threshold: 1.0,
+};
+
 const refs = {
     searchForm: document.querySelector('#search-form'),
     searchBtn: document.querySelector('button'),
   loadMoreBtn: document.querySelector('.load-more'),
-  galleryBlock: document.querySelector('.gallery')
+  galleryBlock: document.querySelector('.gallery'),
+  photoCard: document.getElementsByClassName('photo-card')
 }
 
 
 refs.searchForm.addEventListener('submit', onButtonClick);
-refs.loadMoreBtn.addEventListener('click', onLoadMore)
+// refs.loadMoreBtn.addEventListener('click', onLoadMore)
 const newsApiServes = new NewsApiServes();
 
 async function onButtonClick(e) {
@@ -28,34 +34,37 @@ async function onButtonClick(e) {
   newsApiServes.page = 1; 
  
 
-    newsApiServes.query = e.target.elements.searchQuery.value.trim()
-console.log(newsApiServes.query) 
+  newsApiServes.query = e.target.elements.searchQuery.value.trim()
+ 
   if (!newsApiServes.query) return Notify.info("Еnter a search query") 
   try {
     const { hits, totalHits } = await newsApiServes.fetchArticles()
-     
     if (hits.id === totalHits) return Notify.info("Sorry, there are no images matching your search query. Please try again.")
     randerGallary(hits);
     lightbox.refresh();
-Notify.success(`Hooray! We found ${totalHits} images.`)
-  refs.searchForm.reset();
-  }
-  catch (error) { caonsole.log(error)}  
- 
-  
-  
-  }
+    Notify.success(`Hooray! We found ${totalHits} images.`)
+    refs.searchForm.reset();
 
-async function onLoadMore() {
-  try {
-    const { hits, totalHits } = await newsApiServes.fetchArticles()
-    randerGallary(hits)
-    lightbox.refresh();
-    scrollSmoothly()
-    // if (!totalHits) return Notify.info("We're sorry, but you've reached the end of search results.") 
-  } catch (error) { caonsole.log(error)} 
-   
+    const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+      newsApiServes.fetchArticles()    
+      randerGallary(hits)
+      lightbox.refresh();
+      scrollSmoothly()
+      const totalNumber = refs.photoCard.length;
+      if (totalNumber >= totalHits) {
+          Notify.warning(`We're sorry, but you've reached the end of search results.`);     
+        }
+  }
+  });
+}, options);
+
+observer.observe(document.querySelector('.scroll-guard'));
+  }
+  catch (error) { console.log(error) }
 }
+
 
  function makeGalleryMakup(searchImage) {
    return searchImage.map(({ largeImageURL,
