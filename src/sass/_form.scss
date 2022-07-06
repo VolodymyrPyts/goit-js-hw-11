@@ -7,6 +7,12 @@ margin-left: auto;
 margin-right: auto;
 background-color: #3469fc;
 }
+.container {
+   width: 1200px;
+   padding-left: 15px;
+   padding-right: 15px;
+   margin: 0 auto;
+}
 
 .button {
    margin-left: 20px;    
@@ -18,7 +24,8 @@ img {
    height: 180px;
 }
 .box {
-width: 1200px;
+display: flex;
+   align-items: center;
    padding-left: 15px;
    padding-right: 15px;
    margin-right: auto;
@@ -40,5 +47,15 @@ width: 1200px;
 
  
 flex-basis: calc((100% - 120px) / 4)
+
+}
+a {
+text-decoration: none;
+}
+.info {
+   display: flex;
+   color: gray;
+   font-size: 14px;
+   line-height: 1.5
 
 }

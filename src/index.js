@@ -30,10 +30,11 @@ async function onButtonClick(e) {
 
     newsApiServes.query = e.target.elements.searchQuery.value.trim()
 console.log(newsApiServes.query) 
-  if (!newsApiServes.query) { return Notify.info("Еnter a search query") }
+  if (!newsApiServes.query) return Notify.info("Еnter a search query") 
   try {
     const { hits, totalHits } = await newsApiServes.fetchArticles()
-     if(!totalHits) return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
+     
+    if (hits.id === totalHits) return Notify.info("Sorry, there are no images matching your search query. Please try again.")
     randerGallary(hits);
     lightbox.refresh();
 Notify.success(`Hooray! We found ${totalHits} images.`)
@@ -51,6 +52,7 @@ async function onLoadMore() {
     randerGallary(hits)
     lightbox.refresh();
     scrollSmoothly()
+    // if (!totalHits) return Notify.info("We're sorry, but you've reached the end of search results.") 
   } catch (error) { caonsole.log(error)} 
    
 }
@@ -64,12 +66,12 @@ async function onLoadMore() {
      comments,
      downloads }) => `
     <div class="photo-card">
-    <a href = "${largeImageURL}">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-  <div class="info">
-    <p class="info-item">
-      <b>Likes: ${likes}</b>
-    </p>
+      <a href = "${largeImageURL}">
+      <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+      <div class="info">
+          <p class="info-item">
+          <b>Likes: ${likes}</b>
+          </p>
     <p class="info-item">
       <b>Views: ${views}</b>
     </p>
