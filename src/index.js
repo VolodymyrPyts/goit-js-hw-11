@@ -29,28 +29,26 @@ refs.loadMoreBtn.classList.add('is-hidden');
 async function onSearchClick(e) {
   e.preventDefault();
    clearGelleryForm()
-  
+  newsApiServes.resetPage()
   
   try {
     newsApiServes.query = e.target.elements.searchQuery.value.trim()
    
-  const { hits, totalHits } = await newsApiServes.fetchArticles()
+    const { hits, totalHits } = await newsApiServes.fetchArticles()
     if (!newsApiServes.query) {
       refs.loadMoreBtn.classList.add('is-hidden');
       return Notify.info("Еnter a search query")
     }
     
-         if (!totalHits) {
-         refs.loadMoreBtn.classList.add('is-hidden');
-        refs.searchForm.reset()
-       
-        return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
-         }
+    if (!totalHits) {
+      refs.loadMoreBtn.classList.add('is-hidden');
+      refs.searchForm.reset()
       
-    newsApiServes.page = 1;
-     refs.loadMoreBtn.classList.remove('is-hidden');
-    loadImage()
-         
+      return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
+    }
+      
+    refs.loadMoreBtn.classList.remove('is-hidden');
+    randerGallary(hits);
     e.target.reset();
     refs.searchForm.reset();
   } catch (error) {
@@ -59,71 +57,24 @@ async function onSearchClick(e) {
    
 }
 
-
-
-async function loadImage() {
-       try {
-    const { hits, totalHits } = await newsApiServes.fetchArticles()
-        //  if (!totalHits) {
-        //  refs.loadMoreBtn.classList.add('is-hidden');
-        // refs.searchForm.reset()
-       
-        // return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
-        //  }
-      
-            Notify.success(`Hooray! We found ${totalHits} images.`);
-        
-
-
-    randerGallary(hits);
-    lightbox.refresh();
-    scrollSmoothly();
-    
-  }
-       catch (error) {
-         console.log(error.message);
-        
-       }
-  
-}
-
-
 async function onLoadMoreClick() {
   try {
     const { hits, totalHits } = await newsApiServes.fetchArticles()
   
-  randerGallary(hits);
+    randerGallary(hits);
     lightbox.refresh();
     scrollSmoothly();
     
     const totalNumber = document.getElementsByClassName('photo-card').length;
         
-        if (totalNumber >= totalHits) {
-            Notify.warning(`We're sorry, but you've reached the end of search results.`);
-            refs.loadMoreBtn.classList.add('is-hidden')
-        }      
-  }
-       catch (error) {
+      if (totalNumber >= totalHits) {
+        Notify.warning(`We're sorry, but you've reached the end of search results.`);
+        refs.loadMoreBtn.classList.add('is-hidden')
+      }      
+  } catch (error) {
          console.log(error.message);
-         
-       }
-  
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
  function makeGalleryMakup(searchImage) {
    return searchImage.map(({ largeImageURL,
