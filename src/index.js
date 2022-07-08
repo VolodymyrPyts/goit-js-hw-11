@@ -35,7 +35,10 @@ async function onSearchClick(e) {
     newsApiServes.query = e.target.elements.searchQuery.value.trim()
    
    
-    if (!newsApiServes.query) return Notify.info("Еnter a search query")
+    if (!newsApiServes.query) {
+      refs.loadMoreBtn.classList.add('is-hidden');
+      return Notify.info("Еnter a search query")
+    }
     newsApiServes.page = 1;
     loadImage()
      refs.loadMoreBtn.classList.remove('is-hidden');
