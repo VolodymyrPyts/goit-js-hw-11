@@ -46,7 +46,7 @@ async function onSearchClick(e) {
       
       return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
     }
-      
+      Notify.success(`Hooray! We found ${totalHits} images.`)
     refs.loadMoreBtn.classList.remove('is-hidden');
     randerGallary(hits);
     e.target.reset();
@@ -70,7 +70,8 @@ async function onLoadMoreClick() {
       if (totalNumber >= totalHits) {
         Notify.warning(`We're sorry, but you've reached the end of search results.`);
         refs.loadMoreBtn.classList.add('is-hidden')
-      }      
+    }      
+    
   } catch (error) {
          console.log(error.message);
     }
