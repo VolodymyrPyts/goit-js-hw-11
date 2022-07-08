@@ -34,14 +34,23 @@ async function onSearchClick(e) {
   try {
     newsApiServes.query = e.target.elements.searchQuery.value.trim()
    
-   
+  const { hits, totalHits } = await newsApiServes.fetchArticles()
     if (!newsApiServes.query) {
       refs.loadMoreBtn.classList.add('is-hidden');
       return Notify.info("Еnter a search query")
     }
+    
+         if (!totalHits) {
+         refs.loadMoreBtn.classList.add('is-hidden');
+        refs.searchForm.reset()
+       
+        return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
+         }
+      
     newsApiServes.page = 1;
-    loadImage()
      refs.loadMoreBtn.classList.remove('is-hidden');
+    loadImage()
+         
     e.target.reset();
     refs.searchForm.reset();
   } catch (error) {
@@ -49,6 +58,35 @@ async function onSearchClick(e) {
   };
    
 }
+
+
+
+async function loadImage() {
+       try {
+    const { hits, totalHits } = await newsApiServes.fetchArticles()
+        //  if (!totalHits) {
+        //  refs.loadMoreBtn.classList.add('is-hidden');
+        // refs.searchForm.reset()
+       
+        // return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
+        //  }
+      
+            Notify.success(`Hooray! We found ${totalHits} images.`);
+        
+
+
+    randerGallary(hits);
+    lightbox.refresh();
+    scrollSmoothly();
+    
+  }
+       catch (error) {
+         console.log(error.message);
+        
+       }
+  
+}
+
 
 async function onLoadMoreClick() {
   try {
@@ -72,40 +110,6 @@ async function onLoadMoreClick() {
   
 }
 
-async function loadImage() {
-       try {
-    const { hits, totalHits } = await newsApiServes.fetchArticles()
-      if (!totalHits) {
-        refs.searchForm.reset()
-        return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
-         }
-      
-            Notify.success(`Hooray! We found ${totalHits} images.`);
-        
-if (refs.galleryBlock.childElementCount >= totalHits) {
-            Notify.info("We're sorry, but you've reached the end of search results.");
-            
-        }
-
-    randerGallary(hits);
-    lightbox.refresh();
-    scrollSmoothly();
-    
-  }
-       catch (error) {
-         console.log(error.message);
-        //  if (error.message === 'Request failed with status code 400') {
-        //     Notify.info("We're sorry, but you've reached the end of search results.");
-        //  }
-       }
-  
-}
-
-
-
-
-
-// observer.observe(document.querySelector('.scroll-guard'));
 
 
 
