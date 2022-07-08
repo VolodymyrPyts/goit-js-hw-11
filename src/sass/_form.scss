@@ -1,4 +1,7 @@
 .header {
+   position: fixed;
+   top: 0;
+   width: 1170px;
 display: flex;
 justify-content: center;
 align-items: center;
@@ -11,7 +14,9 @@ background-color: #3469fc;
    width: 1200px;
    padding-left: 15px;
    padding-right: 15px;
-   margin: 0 auto;
+   margin-top: 65px;
+   margin-left: auto;
+   margin-right: auto;
 }
 
 .button {
@@ -33,12 +38,11 @@ display: flex;
    
 }
 .gallery {
-// width: 1170px;
+
    display: flex;
    flex-wrap: wrap;
    text-align: center;
    justify-content: space-between;
-//   margin: -15px;
    
 }
 
@@ -49,9 +53,11 @@ display: flex;
 flex-basis: calc((100% - 120px) / 4)
 
 }
+
 a {
 text-decoration: none;
 }
+
 .info {
    display: flex;
    color: gray;
@@ -59,3 +65,14 @@ text-decoration: none;
    line-height: 1.5
 
 }
+
+.load-more {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.is-hidden {
+   display: none;
+}
+

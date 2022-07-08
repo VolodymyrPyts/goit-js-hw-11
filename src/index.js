@@ -1,4 +1,4 @@
-
+import './sass/index.scss'
 import NewsApiServes from "./js/new-serves";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from "simplelightbox";
@@ -10,60 +10,112 @@ position: 'rigth-top',
 timeout: 1000
 });
 
-const options = {
-  rootMargin: '200px',
-  threshold: 1.0,
-};
+
 
 const refs = {
-    searchForm: document.querySelector('#search-form'),
-    searchBtn: document.querySelector('button'),
+  searchForm: document.querySelector('#search-form'),
+  searchBtn: document.querySelector('.button'),
   loadMoreBtn: document.querySelector('.load-more'),
   galleryBlock: document.querySelector('.gallery'),
-  photoCard: document.getElementsByClassName('photo-card')
+  }
+
+
+refs.searchForm.addEventListener('submit', onSearchClick);
+refs.loadMoreBtn.addEventListener('click', onLoadMoreClick)
+
+const newsApiServes = new NewsApiServes();
+refs.loadMoreBtn.classList.add('is-hidden');
+
+async function onSearchClick(e) {
+  e.preventDefault();
+   clearGelleryForm()
+  
+  
+  try {
+    newsApiServes.query = e.target.elements.searchQuery.value.trim()
+   
+   
+    if (!newsApiServes.query) return Notify.info("Еnter a search query")
+    newsApiServes.page = 1;
+    loadImage()
+     refs.loadMoreBtn.classList.remove('is-hidden');
+    e.target.reset();
+    refs.searchForm.reset();
+  } catch (error) {
+    console.log(error.message)
+  };
+   
 }
 
-
-refs.searchForm.addEventListener('submit', onButtonClick);
-// refs.loadMoreBtn.addEventListener('click', onLoadMore)
-const newsApiServes = new NewsApiServes();
-
-async function onButtonClick(e) {
-  e.preventDefault();
-  clearGelleryForm()
-  newsApiServes.page = 1; 
- 
-
-  newsApiServes.query = e.target.elements.searchQuery.value.trim()
- 
-  if (!newsApiServes.query) return Notify.info("Еnter a search query") 
+async function onLoadMoreClick() {
   try {
     const { hits, totalHits } = await newsApiServes.fetchArticles()
-    if (hits.id === totalHits) return Notify.info("Sorry, there are no images matching your search query. Please try again.")
+  
+  randerGallary(hits);
+    lightbox.refresh();
+    scrollSmoothly();
+    
+    const totalNumber = document.getElementsByClassName('photo-card').length;
+        
+        if (totalNumber >= totalHits) {
+            Notify.warning(`We're sorry, but you've reached the end of search results.`);
+            refs.loadMoreBtn.classList.add('is-hidden')
+        }      
+  }
+       catch (error) {
+         console.log(error.message);
+         
+       }
+  
+}
+
+async function loadImage() {
+       try {
+    const { hits, totalHits } = await newsApiServes.fetchArticles()
+      if (!totalHits) {
+        refs.searchForm.reset()
+        return Notify.warning("Sorry, there are no images matching your search query. Please try again.")
+         }
+      
+            Notify.success(`Hooray! We found ${totalHits} images.`);
+        
+if (refs.galleryBlock.childElementCount >= totalHits) {
+            Notify.info("We're sorry, but you've reached the end of search results.");
+            
+        }
+
     randerGallary(hits);
     lightbox.refresh();
-    Notify.success(`Hooray! We found ${totalHits} images.`)
-    refs.searchForm.reset();
-
-    const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-      newsApiServes.fetchArticles()    
-      randerGallary(hits)
-      lightbox.refresh();
-      scrollSmoothly()
-      const totalNumber = refs.photoCard.length;
-      if (totalNumber >= totalHits) {
-          Notify.warning(`We're sorry, but you've reached the end of search results.`);     
-        }
+    scrollSmoothly();
+    
   }
-  });
-}, options);
-
-observer.observe(document.querySelector('.scroll-guard'));
-  }
-  catch (error) { console.log(error) }
+       catch (error) {
+         console.log(error.message);
+        //  if (error.message === 'Request failed with status code 400') {
+        //     Notify.info("We're sorry, but you've reached the end of search results.");
+        //  }
+       }
+  
 }
+
+
+
+
+
+// observer.observe(document.querySelector('.scroll-guard'));
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
  function makeGalleryMakup(searchImage) {
@@ -107,6 +159,7 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 500,
 });
+
 function scrollSmoothly() {
   const { height: cardHeight } = document
     .querySelector(".gallery")
